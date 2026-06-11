@@ -1,0 +1,53 @@
+name: Import student health check
+
+on:
+  schedule:
+    - cron: "0 4 * * *"
+    - cron: "0 9 * * *"
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+env:
+  REACT_APP_TEST_MANAGER1_EMAIL: ${{ secrets.REACT_APP_TEST_MANAGER1_EMAIL }}
+  REACT_APP_TEST_MANAGER1_PASSWORD: ${{ secrets.REACT_APP_TEST_MANAGER1_PASSWORD }}
+  REACT_APP_CASDOOR_SDK_SERVER_URL: ${{ secrets.REACT_APP_CASDOOR_SDK_SERVER_URL }}
+  REACT_PREPROD_URL: ${{ secrets.REACT_PREPROD_URL }}
+
+jobs:
+  run-student-import-e2e-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.1
+
+      - name: Run the test 
+        uses: cypress-io/github-action@v6.5.0
+        with:
+          spec: cypress/e2e/import.students.cy.tsx
+          browser: electron
+
+      - name: Update Instatus page when failure
+        if: ${{ failure() }}
+        run: |
+          curl -X POST ${{ secrets.INSTATUS_WEBHOOK_STUDENT_URL }} \
+          -H "Authorization: Bearer ${{ secrets.INSTATUS_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "trigger": "down"
+              }'
+
+      - name: Update Instatus page when success
+        if: ${{ success() }}
+        run: |
+          curl -X POST ${{ secrets.INSTATUS_WEBHOOK_STUDENT_URL }} \
+          -H "Authorization: Bearer ${{ secrets.INSTATUS_API_KEY }}" \
+          -H "Content-Type: application/json" \
+          -d '{
+                "trigger": "up"
+              }'

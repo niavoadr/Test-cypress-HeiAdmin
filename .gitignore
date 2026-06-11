@@ -1,0 +1,9 @@
+node_modules
+
+cypress/downloads/*.pdf
+cypress/screenshots/*
+
+.idea/
+.env
+
+delete.cy.tsx

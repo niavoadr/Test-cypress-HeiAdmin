@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "types": ["cypress","@faker-js/faker"],
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowJs": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": ["./types", "./node_modules/@types", "./cypress/support"]
+  },
+  "include": ["cypress/support/**/*.ts", "cypress/e2e/**/*.cy.tsx", "src", "cypress"],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
+  ]
+}
+
